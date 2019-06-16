@@ -1,16 +1,47 @@
 "use strict";
 
 const path = require("path");
+const glob = require("glob");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+const setPWA = () => {
+  const entry = {};
+  const HtmlWebpackPlugins = [];
+  const entryFiles = glob.sync(path.join(__dirname, './src/pages/*/index.js'));
+  console.log('entryFiles', entryFiles)
+  Object.keys(entryFiles).map((index) => {
+    const entryFile = entryFiles[index];
+    const match = entryFile.match(/src\/pages\/(.*)\/index\.js/);
+    const pageName = match && match[1];
+    entry[pageName] = entryFile;
+    HtmlWebpackPlugins.push(
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, `src/pages/${pageName}/index.html`),
+        filename: `${pageName}.html`,
+        chunks: [pageName],
+        inject: true,
+        minify: {
+          html5: true,
+          collapseWhitespace: true,
+          preserveLineBreaks: false,
+          minifyCSS: true,
+          minifyJS: true,
+          removeComments: false
+        }
+      }),
+    )
+  })
+  return {
+    entry,
+    HtmlWebpackPlugins
+  }
+}
+const { entry, HtmlWebpackPlugins } = setPWA()
 module.exports = {
-  entry: {
-    index: "./src/index.js",
-    search: "./src/search.js"
-  },
+  entry: entry,
   mode: "production",
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -29,23 +60,23 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          MiniCssExtractPlugin.loader, 
-          "css-loader", 
-          "less-loader", 
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "less-loader",
           {
-          loader: 'postcss-loader',
-          options: {
-            plugins: [
-              require('autoprefixer')
-            ]
-          }
-        }, {
-          loader: 'px2rem-loader',
-          options: {
-            remUnit: 75,    // rem相对px的转换单位。  1rem=75px   
-            remPrecison: 8   // px转换为rem的小数点位数 
-          }
-        }]
+            loader: 'postcss-loader',
+            options: {
+              plugins: [
+                require('autoprefixer')
+              ]
+            }
+          }, {
+            loader: 'px2rem-loader',
+            options: {
+              remUnit: 75,    // rem相对px的转换单位。  1rem=75px   
+              remPrecison: 8   // px转换为rem的小数点位数 
+            }
+          }]
       },
       {
         test: /\.(png|jpg|gif|jpeg)$/,
@@ -75,19 +106,5 @@ module.exports = {
       },
       canPrint: true
     }),
-    new HtmlWebpackPlugin({
-     template: path.join(__dirname, 'src/index.html'),
-     filename: 'index.html',
-     chunks: ['index'],
-     inject: true,
-     minify: {
-       html5:true,
-       collapseWhitespace:true,
-       preserveLineBreaks: false,
-       minifyCSS: true,
-       minifyJS: true,
-       removeComments: false
-     }
-    }),
-  ]
+  ].concat(HtmlWebpackPlugins)
 };
