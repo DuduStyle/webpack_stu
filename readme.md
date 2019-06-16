@@ -75,3 +75,87 @@ WDS `webpack-dev-server` 不刷新浏览器
 Hash 和整个项目的构建相关，只要项目文件有修改，整个项目构建的hash值就回更改
 Chunkhash 和webpack打包的chunk有关，不同的entry会生成不同的chunkhash值
 Contenthash 根据文件内容来定义hash，文件内容不变，则contenthash不变
+
+### clean-webpack-plugin
+清空dist目录
+html-webpack-plugin   压缩 html  默认引引擎是ejs
+optimize-css-assets-webpack-plugin   同时使用cssnano   压缩css
+
+### 自动补齐前缀
+
+autoprefixer
+postcss-loader  放在css-loader之前即可
+
+### rem
+浏览器的分辨率
+之前需要使用css媒体查询实现响应式布局
+rem 相对单位   相对根元素  font-size of the root element
+px是绝对单位
+
+
+-------------------------
+px2rem-loader
+
+手淘lib-flexible
+
+``` md 
+q: 这样统一转化 rem 是方便，但是有的时候有些样式并不想转化，这个时候就感觉不灵活了
+t: 这个问题可以解决的，可以用 /*no*/ 这种注释语法。比如：
+.page {
+  font-size: 12px; /*no*/
+  width: 375px; /*no*/
+  height: 40px; 
+}
+
+后面有 /*no*/这种注释语法会不进行 rem 的转换
+```
+### 资源内联
+1. 代码层面：
+页面框架的吃实话脚本
+上报相关打点
+css内敛避免页面闪动
+2. 请求层面：减少HTTP网络请求数
+小图片或者字体的内联（url-loader）
+
+3. raw-loader 内联html    
+```html
+<script>${require('raw-loader!bable-loader!./meta.html')}</script>
+```
+raw-loader 内联js
+```js
+<script>${require('raw-loader!bable-loader!../node_modules/lib-flexible')}</script>
+```
+
+css内联
+方案1：借助 style-loader
+```js
+use: [
+  {
+    loader: 'style-loader',
+    options: {
+      insertAt: 'top', // 样式插入到<head>
+      singleton: true, // 将所有的style标签合并成一个
+    }
+  }
+]
+```
+方案2： html-inline-css-webpack-plugin
+
+
+### 多页面应用MPA
+每一次页面跳转的时候，后台服务器会返回一个新的html文档；
+
+每一个页面对应一个entry， 一个html-webpack-plugin
+缺点：每次新增或删除页面都需要改webpack配置
+```js
+module.exports = {
+  entry: {
+    index: './src/index/index.js',
+    search: './src/search/index.js'
+  }
+}
+```
+解决：
+动态获取entry和设置html-webpack-plugin数量
+利用 glob.sync 
+  entry: glob.sync(path.join(__dirname, './src/*/index.js'))
