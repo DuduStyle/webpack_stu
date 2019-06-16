@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin'); // 分离文件
 
 // 设置多页面
 const setPWA = () => {
@@ -20,9 +21,10 @@ const setPWA = () => {
     entry[pageName] = entryFile;
     HtmlWebpackPlugins.push(
       new HtmlWebpackPlugin({
+        inlineSource: '.css$',
         template: path.join(__dirname, `src/pages/${pageName}/index.html`),
         filename: `${pageName}.html`,
-        chunks: [pageName],
+        chunks: ['vendors', pageName],
         inject: true,
         minify: {
           html5: true,
@@ -108,5 +110,65 @@ module.exports = {
       },
       canPrint: true
     }),
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: 'react',
+          entry: 'https://11.url.cn/now/lib/16.2.0/react.min.js',
+          global: 'React',
+        },
+        {
+          module: 'react-dom',
+          entry: 'https://11.url.cn/now/lib/16.2.0/react-dom.min.js',
+          global: 'ReactDom',
+        },
+      ],
+    })
   ].concat(HtmlWebpackPlugins),
+  // optimization: {
+  //   splitChunks: {
+  //     cacheGroups: {
+  //       commons: {
+  //         test: /(react|react-dom)/,
+  //         name: 'vendors',
+  //         chunks: 'all'
+  //       }
+  //     }
+  //   }
+  // },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'async',
+  //     minSize: 30000,
+  //     maxSize: 0,
+  //     minChunks: 1,
+  //     maxAsyncRequests: 5,
+  //     maxInitialRequests: 3,
+  //     automaticNameDelimiter: '~',
+  //     name: true,
+  //     cacheGroups: {
+  //       commons: {
+  //         test: /[\\/]node_modules[\\/]/,
+  //         priority: -10
+  //       },
+  //       default: {
+  //         minChunks: 2,
+  //         priority: -20,
+  //         reuseExistingChunk: true
+  //       }
+  //     }
+  //   }
+  // }
+  //  optimization: {
+  //       splitChunks: {
+  //           minSize: 0,
+  //           cacheGroups: {
+  //               commons: {
+  //                   name: 'commons',
+  //                   chunks: 'all',
+  //                   minChunks: 2
+  //               }
+  //           }
+  //       }
+  //   }
 };

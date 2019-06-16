@@ -167,3 +167,37 @@ module.exports = {
 开发环境开启，线上环境关闭  ---- Sentry错误日志上传系统
   线上排查问题的时候可以将sourcemap上传到错误监控系统
 
+### 提取页面公共资源
+基础库分离
+ 思路：将react react-dom基础包通过cdn引入，不打包bundle中
+方法：使用html-webpack-externals-plugin 
+```js
+plugins: [
+  new HtmlWebpackExternalsPlugin({
+    externals: [
+      {
+        module: 'react',
+        entry: '//11.url/now/lib/15.1.0/react-with-add.......',
+        global: 'React',
+      } 
+    ]
+  })
+]
+```
+或者使用webpack4内置的替代CommonsChunkPlugin插件
+chunks参数说明：
+ async 异步引入的库进行分离（默认）
+ initial 同步引入的库进行分离
+ all 所有引入的库进行分离（推荐）
+
+ 利用splitChunksPlugin分离页面公共文件
+
+ ### tree shaking(摇数优化)
+  概念：1个模块可能有多个方法，只要其中的某个方法使用到了，则整个文件都会被打到bundle里面去，tree shaking就是只要用到的方法打入bundle，没用到的方法会在uglify阶段被擦除掉
+
+  使用：webpack默认支持，在.babelrc里设置modules：false即可，
+    production mode的情况下默认开启
+
+    要求：必须是ES6语法，CJS的方式不支持
+
+    
