@@ -7,6 +7,7 @@ import "./search.less";
 
 export default class Search extends Component {
   render() {
+    debugger;
     return (
       <div className="dangerous-text">
         search Te

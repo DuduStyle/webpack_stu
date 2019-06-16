@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+// 设置多页面
 const setPWA = () => {
   const entry = {};
   const HtmlWebpackPlugins = [];
@@ -42,6 +43,7 @@ const setPWA = () => {
 const { entry, HtmlWebpackPlugins } = setPWA()
 module.exports = {
   entry: entry,
+  devtool: 'source-map',
   mode: "production",
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -106,5 +108,5 @@ module.exports = {
       },
       canPrint: true
     }),
-  ].concat(HtmlWebpackPlugins)
+  ].concat(HtmlWebpackPlugins),
 };

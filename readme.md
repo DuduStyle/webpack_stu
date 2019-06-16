@@ -159,3 +159,11 @@ module.exports = {
 动态获取entry和设置html-webpack-plugin数量
 利用 glob.sync 
   entry: glob.sync(path.join(__dirname, './src/*/index.js'))
+
+
+### source map
+作用：通过source map定位到源代码
+  科普文，阮一峰
+开发环境开启，线上环境关闭  ---- Sentry错误日志上传系统
+  线上排查问题的时候可以将sourcemap上传到错误监控系统
+
