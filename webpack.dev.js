@@ -3,15 +3,15 @@
 const path = require("path");
 const webpack = require("webpack");
 const glob = require("glob");
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 // 设置多页面
 const setPWA = () => {
   const entry = {};
   const HtmlWebpackPlugins = [];
-  const entryFiles = glob.sync(path.join(__dirname, './src/pages/*/index.js'));
-  console.log('entryFiles', entryFiles)
-  Object.keys(entryFiles).map((index) => {
+  const entryFiles = glob.sync(path.join(__dirname, "./src/pages/*/index.js"));
+  console.log("entryFiles", entryFiles);
+  Object.keys(entryFiles).map(index => {
     const entryFile = entryFiles[index];
     const match = entryFile.match(/src\/pages\/(.*)\/index\.js/);
     const pageName = match && match[1];
@@ -30,19 +30,19 @@ const setPWA = () => {
           minifyJS: true,
           removeComments: false
         }
-      }),
-    )
-  })
+      })
+    );
+  });
   return {
     entry,
     HtmlWebpackPlugins
-  }
-}
-const { entry, HtmlWebpackPlugins } = setPWA()
+  };
+};
+const { entry, HtmlWebpackPlugins } = setPWA();
 module.exports = {
   entry: entry,
   mode: "development",
-  devtool: 'source-map',
+  devtool: "source-map",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: `[name].js`
@@ -51,7 +51,7 @@ module.exports = {
     rules: [
       {
         test: /.js$/,
-        use: "babel-loader"
+        use: ["babel-loader", "eslint-loader"]
       },
       {
         test: /.css$/,
@@ -74,9 +74,9 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-  ].concat(HtmlWebpackPlugins),
+  plugins: [new webpack.HotModuleReplacementPlugin()].concat(
+    HtmlWebpackPlugins
+  ),
   devServer: {
     contentBase: "./dist",
     hot: true

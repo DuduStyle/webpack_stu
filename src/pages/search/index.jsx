@@ -1,17 +1,14 @@
-"use strict";
-
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import logo from "../../images/logo.png";
 import "./search.less";
 
-export default class Search extends Component {
+export default class Search extends PureComponent {
   render() {
-    debugger;
     return (
       <div className="dangerous-text">
         search Te
-        <img src={logo} />
+        <img src={logo} alt="22" />
       </div>
     );
   }

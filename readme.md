@@ -199,5 +199,45 @@ chunks参数说明：
     production mode的情况下默认开启
 
     要求：必须是ES6语法，CJS的方式不支持
+### 代码分割
+适用场景：抽离相同贴代码到一个共享块
+脚本懒加载，使得初始下载的代码更小
+懒加载js脚本的方式
+· CommonJS：require.ensure
+. ES6:动态import 目前原生还不支持，需要babel转换
+`npm i @babel/plugin-syntax-dynamic-import --save-dev`
+在.babelrc中加入
+```js
+"plugins":["@babel/plugin-syntax-dynamic-import"],
+```
+
+具体使用
+```js
+clickImport = () => {
+  import(xxx).then((text) => {
+    // 这里是逻辑代码；
+  })
+}
+```
+### eslint的必须性
+行业优秀Eslint的规范实践
+Airbnb: eslint-config-airbnb eslint-
+
+制定规范
+不重复造轮子，基于eslint：recommend配置并改进
+能够帮助发现代码错误的规则，全部开启
+
+帮助保持团队的代码风格统一，而不是限制开发体验
+
+执行落地
+1. 和CI/CD系统集成
+安装husky 
+增加npm script 通过lint-staged增量检查修改的文件
+2. 和webpack集成
+使用eslint-loader, 构建时检查JS规范
+安装 eslint, eslint-plugin-import, eslint-plugin-react
+```js
+
+```
 
     
