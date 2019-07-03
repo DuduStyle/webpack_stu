@@ -9,9 +9,12 @@
     "dev": "webpack-dev-server --open --config  webpack.dev.js",
     "build:ssr": "webpack --config  webpack.ssr.js",
     "lint-staged": "lint-staged",
-    "lint-staged:js": "eslint --ext .js",
+    "lint-staged:js": "eslint --ext .js"
   },
-  "keywords": [],
+  "keywords": [
+    "111",
+    "2222"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -35,14 +38,17 @@
     "glob": "^7.1.4",
     "html-webpack-externals-plugin": "^3.8.0",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^3.0.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
+    "lint-staged": "^9.0.2",
     "mini-css-extract-plugin": "^0.7.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "postcss-loader": "^3.0.0",
     "prettier": "^1.18.2",
     "px2rem-loader": "^0.1.9",
     "style-loader": "^0.23.1",
+    "stylelint-config-prettier": "^5.2.0",
     "url-loader": "^1.1.2",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
