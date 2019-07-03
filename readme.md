@@ -235,9 +235,66 @@ Airbnb: eslint-config-airbnb eslint-
 增加npm script 通过lint-staged增量检查修改的文件
 2. 和webpack集成
 使用eslint-loader, 构建时检查JS规范
-安装 eslint, eslint-plugin-import, eslint-plugin-react
+安装 eslint, eslint-plugin-import, eslint-plugin-react eslint-loader 
 ```js
 
 ```
+注意：
+```cmd
+Module build failed (from ./node_modules/eslint-loader/index.js):
+Error: Cannot find module 'eslint/lib/formatters/stylish'
+```
+这个问题是eslint6.x将formatters放在了别的地方
+```https://github.com/webpack-contrib/eslint-loader/issues/271```
+
+### webpack打包库和组件
+webapck除了可以用来打包应用，也可以用来打包js库（腾讯面试必考题）
+
+实现一个大整数加法库的打包
+1. 需要打包压缩版和非压缩版本
+2. 支持 AMD/CJS/ESM 模块引入
+
+库的目录结构和打包要求，也可以使用script引入使用
+
+如何将库暴露出去
+library:指定库的全局变量
+libraryTarget:支持库引入的方式
+```js
+module.exports = {
+  mode: 'production',
+  entry: {
+    "large-number": "./src/index.js",
+    "large-number.min": "./src/index.js"
+  },
+  output: {
+    filename: "[name].js",
+    library: "largeNumber",  // 指定库的全局变量
+    libraryExport: 'default', 
+    libraryTarget:'umd' // 支持库引入的方式
+  }
+}
+```
+
+
+### webpack ssr 服务端渲染
+渲染：html+css+js+data -> 渲染后的HTML
+服务端：
+  1. 所有模板等资源都存储在服务端
+  2. 内网机器拉取数据更快
+  3. 一个HTML返回所有数据
+
+浏览器和服务端交互流程
+请求开始->server ->HTML template+data -> server 
+SSR优势
+减少白屏时间
+利于SEO
+
+实现思路
+服务端：
+使用 react-dom/server 的renderTostring方法将React组件渲染成字符串
+服务端路由返回对应的模板
+
+客户端
+ 打包出针对服务端的组件
 
     

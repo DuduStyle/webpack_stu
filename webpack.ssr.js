@@ -12,30 +12,34 @@ const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin"); // 
 const setPWA = () => {
   const entry = {};
   const HtmlWebpackPlugins = [];
-  const entryFiles = glob.sync(path.join(__dirname, "./src/pages/*/index.js"));
+  const entryFiles = glob.sync(
+    path.join(__dirname, "./src/pages/*/index-server.js")
+  );
   console.log("entryFiles", entryFiles);
   Object.keys(entryFiles).map(index => {
     const entryFile = entryFiles[index];
-    const match = entryFile.match(/src\/pages\/(.*)\/index\.js/);
+    const match = entryFile.match(/src\/pages\/(.*)\/index-server\.js/);
     const pageName = match && match[1];
-    entry[pageName] = entryFile;
-    HtmlWebpackPlugins.push(
-      new HtmlWebpackPlugin({
-        inlineSource: ".css$",
-        template: path.join(__dirname, `src/pages/${pageName}/index.html`),
-        filename: `${pageName}.html`,
-        chunks: ["vendors", pageName],
-        inject: true,
-        minify: {
-          html5: true,
-          collapseWhitespace: true,
-          preserveLineBreaks: false,
-          minifyCSS: true,
-          minifyJS: true,
-          removeComments: false
-        }
-      })
-    );
+    if (pageName) {
+      entry[pageName] = entryFile;
+      HtmlWebpackPlugins.push(
+        new HtmlWebpackPlugin({
+          inlineSource: ".css$",
+          template: path.join(__dirname, `src/pages/${pageName}/index.html`),
+          filename: `${pageName}.html`,
+          chunks: ["vendors", pageName],
+          inject: true,
+          minify: {
+            html5: true,
+            collapseWhitespace: true,
+            preserveLineBreaks: false,
+            minifyCSS: true,
+            minifyJS: true,
+            removeComments: false
+          }
+        })
+      );
+    }
   });
   return {
     entry,
@@ -45,11 +49,11 @@ const setPWA = () => {
 const { entry, HtmlWebpackPlugins } = setPWA();
 module.exports = {
   entry: entry,
-  // devtool: "source-map",
-  mode: "production",
+  mode: "none",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: `[name]_[chunkhash:8].js`
+    filename: `[name]-server.js`,
+    libraryTarget: "umd"
   },
   module: {
     rules: [
@@ -57,13 +61,13 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: [
-          "babel-loader",
-          {
-            loader: "eslint-loader",
-            options: {
-              formatter: require("eslint/lib/cli-engine/formatters/stylish")
-            }
-          }
+          "babel-loader"
+          // {
+          //   loader: "eslint-loader",
+          //   options: {
+          //     formatter: require("eslint/lib/cli-engine/formatters/stylish")
+          //   }
+          // }
         ]
       },
       {
@@ -145,50 +149,4 @@ module.exports = {
       ]
     })
   ].concat(HtmlWebpackPlugins)
-  // optimization: {
-  //   splitChunks: {
-  //     cacheGroups: {
-  //       commons: {
-  //         test: /(react|react-dom)/,
-  //         name: 'vendors',
-  //         chunks: 'all'
-  //       }
-  //     }
-  //   }
-  // },
-  // optimization: {
-  //   splitChunks: {
-  //     chunks: 'async',
-  //     minSize: 30000,
-  //     maxSize: 0,
-  //     minChunks: 1,
-  //     maxAsyncRequests: 5,
-  //     maxInitialRequests: 3,
-  //     automaticNameDelimiter: '~',
-  //     name: true,
-  //     cacheGroups: {
-  //       commons: {
-  //         test: /[\\/]node_modules[\\/]/,
-  //         priority: -10
-  //       },
-  //       default: {
-  //         minChunks: 2,
-  //         priority: -20,
-  //         reuseExistingChunk: true
-  //       }
-  //     }
-  //   }
-  // }
-  //  optimization: {
-  //       splitChunks: {
-  //           minSize: 0,
-  //           cacheGroups: {
-  //               commons: {
-  //                   name: 'commons',
-  //                   chunks: 'all',
-  //                   minChunks: 2
-  //               }
-  //           }
-  //       }
-  //   }
 };
