@@ -61,7 +61,7 @@
     "ios 7"
   ],
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "lib-flexible": "^0.3.2",
     "raw-loader": "^0.5.1",
     "react": "^16.8.6",
